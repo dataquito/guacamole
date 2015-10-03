@@ -55,7 +55,7 @@ gulp.task('styles', function() {
     return sass('app/styles',{
         style: 'expanded',
         precision: 10,
-        loadPath: ['app/bower_components/bootstrap-sass-official/assets/stylesheets']
+        loadPath: ['app/bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap.scss']
     })
     .pipe(autoprefixer('last 1 version'))
     .pipe(concat('application.css'))
