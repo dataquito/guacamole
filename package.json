@@ -1,0 +1,27 @@
+{
+  "name": "guacamole",
+  "version": "0.0.1",
+  "description": "React component for map layer rendering.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dataquito/guacamole.git"
+  },
+  "keywords": [
+    "react",
+    "map",
+    "layers"
+  ],
+  "author": "Omar Eduardo Torres <torres.omar.eduardo@gmail.com> (http://dataquito.org/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dataquito/guacamole/issues"
+  },
+  "homepage": "https://github.com/dataquito/guacamole"
+}
