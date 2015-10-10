@@ -35,11 +35,14 @@
     "gulp": "^3.9.0",
     "gulp-jscs": "^3.0.1",
     "gulp-jshint": "^1.11.2",
+    "gulp-less": "^3.0.3",
     "gulp-load-plugins": "^1.0.0-rc.1",
+    "gulp-plumber": "^1.0.1",
     "gulp-print": "^2.0.1",
     "gulp-util": "^3.0.6",
     "jshint-stylish": "^2.0.1",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "wiredep": "^3.0.0-beta"
   },
   "browserify": {
     "transform": [

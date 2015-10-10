@@ -13,12 +13,26 @@ var paths = {
     scripts: [
         'app/scripts/*.js',
         'lib/**/*.js',
-        'gulpfile.js'
+        // 'gulpfile.js'
     ],
     styles: [
         'app/styles/**/*.scss'
     ]
 };
+
+gulp.task('html', function() {
+    return gulp.src(paths.html)
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('styles', function() {
+    return gulp.src(paths.styles)
+    .pipe($.plumber())
+    .pipe($.less({
+        paths: './bower_components/bootstrap/less/' 
+    }))
+    .pipe(gulp.dest('dist/styles/'));
+});
 
 gulp.task('lint', function() {
     console.log('Linting the js code');
@@ -41,4 +55,16 @@ gulp.task('scripts', function() {
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(gulp.dest('dist/scripts/'));
+});
+
+gulp.task('wire-dependencies', function() {
+    var config = {
+        bowerJson: require('./bower.json'),
+        directory: './bower_components/',
+        ignorePath: '../..'
+    };
+    var wiredep = require('wiredep').stream;
+    return gulp.src(paths.html)
+    .pipe(wiredep(config))
+    .pipe(gulp.dest('dist/'));
 });
