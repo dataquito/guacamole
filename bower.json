@@ -1,9 +1,27 @@
 {
-    "name": "strahc",
-    "version": "0.0.1",
-    "dependencies": {
-        "jquery": "~2.1.1",
-        "bootstrap-sass-official": ">=3.3.0",
-        "modernizr": "^2.8.3"
-    }
+  "name": "guacamole",
+  "version": "0.0.1",
+  "homepage": "https://github.com/dataquito/guacamole",
+  "authors": [
+    "torresomar <torres.omar.eduardo@gmail.com>"
+  ],
+  "description": "React Map Layer component",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "react",
+    "map",
+    "layers"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "bootstrap": "~3.3.5"
+  }
 }
