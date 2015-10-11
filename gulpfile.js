@@ -7,13 +7,13 @@ var $ = require('gulp-load-plugins')({
 var browserify = require('browserify');
 var babelify = require('babelify');
 var source = require('vinyl-source-stream');
+var browserSync = require('browser-sync');
 
 var paths = {
     html: ['app/*.html'],
     scripts: [
         'app/scripts/*.js',
-        'lib/**/*.js',
-        // 'gulpfile.js'
+        'lib/**/*.js'
     ],
     styles: [
         'app/styles/**/*.scss'
@@ -22,7 +22,7 @@ var paths = {
 
 gulp.task('html', function() {
     return gulp.src(paths.html)
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('./dist/'));
 });
 
 gulp.task('styles', function() {
@@ -47,7 +47,7 @@ gulp.task('lint', function() {
 
 gulp.task('scripts', function() {
     browserify({
-        entries: 'lib/sample.jsx',
+        entries: 'app/scripts/main.js',
         extensions: ['.jsx'],
         debug: true
     })
@@ -57,7 +57,8 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('dist/scripts/'));
 });
 
-gulp.task('wire-dependencies', function() {
+
+gulp.task('wire-dependencies', ['html'], function() {
     var config = {
         bowerJson: require('./bower.json'),
         directory: './bower_components/',
@@ -66,5 +67,28 @@ gulp.task('wire-dependencies', function() {
     var wiredep = require('wiredep').stream;
     return gulp.src(paths.html)
     .pipe(wiredep(config))
-    .pipe(gulp.dest('dist/'));
+    .pipe(gulp.dest('./dist/'));
+});
+
+gulp.task('bs-reload', function () {
+    browserSync.reload();
+});
+
+gulp.task('browser-sync', function() {
+    browserSync({
+        server: {
+            baseDir: './dist/',
+            routes: {
+                "/bower_components": "bower_components"
+            }
+        }
+    });
+});
+
+gulp.task('build', ['browser-sync', 'styles', 'scripts', 'wire-dependencies']);
+
+gulp.task('default', ['build'], function() {
+    gulp.watch(paths.styles, ['styles']);
+    gulp.watch(paths.scripts, ['scripts']);
+    gulp.watch(paths.html, ['wire-dependencies', 'bs-reload']);
 });
