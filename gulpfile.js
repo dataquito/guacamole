@@ -13,7 +13,7 @@ var paths = {
     html: ['app/*.html'],
     scripts: [
         'app/scripts/*.js',
-        'lib/**/*.js'
+        'lib/**/*.{jsx,js}'
     ],
     styles: [
         'app/styles/**/*.scss'
@@ -46,7 +46,7 @@ gulp.task('lint', function() {
 });
 
 gulp.task('scripts', function() {
-    browserify({
+    return browserify({
         entries: 'app/scripts/main.js',
         extensions: ['.jsx'],
         debug: true
@@ -54,7 +54,10 @@ gulp.task('scripts', function() {
     .transform(babelify)
     .bundle()
     .pipe(source('bundle.js'))
-    .pipe(gulp.dest('dist/scripts/'));
+    .pipe(gulp.dest('dist/scripts/'))
+    .on('end', function(){
+        browserSync.reload();
+    });
 });
 
 
