@@ -71,13 +71,14 @@ var GoogleMap = React.createClass({
         console.log('Should I update');
         var map = this._map;
         var _this = this;
-        map.data.forEach(function(feature) {
-            var visible = true;
-            if(typeof feature.getProperty(MN_CODE) !== 'undefined' && _this.props.view === 'municipalities'){
-                visible = false;
-            }
-            map.data.overrideStyle(feature, { visible: visible });
-        })
+        map.data.setStyle(this._setFeatureStyle);
+        // map.data.forEach(function(feature) {
+        //     var visible = true;
+        //     if(typeof feature.getProperty(MN_CODE) !== 'undefined' && _this.props.view === 'municipalities'){
+        //         visible = false;
+        //     }
+        //     map.data.overrideStyle(feature, { visible: visible });
+        // })
         return false;
     },
     componentWillUpdate: function(nextProps, nextState) {
@@ -111,11 +112,16 @@ var GoogleMap = React.createClass({
         return colorPolygons.promise();
     },
     _setFeatureStyle: function(feature) {
+        console.log('Set feature style');
         if(typeof this.props.featureStyle === 'function'){
             this.props.featureStyle(feature);
         }else{
             var visible = true;
-            if(typeof feature.getProperty(MN_CODE) !== 'undefined' || this.props.view === 'municipalities'){
+            if(this.props.view === 'municipalities' && typeof feature.getProperty(MN_CODE) === 'undefined'){
+                console.log('Municipio',feature.getProperty('NAME'));
+                visible = false;
+            }else if(this.props.view === 'states' && typeof feature.getProperty(MN_CODE) !== 'undefined'){
+                console.log('Estado',feature.getProperty('NAME'));
                 visible = false;
             }
             return {
