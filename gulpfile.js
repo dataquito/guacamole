@@ -17,12 +17,20 @@ var paths = {
     ],
     styles: [
         'app/styles/**/*.scss'
+    ],
+    json: [
+        'app/json/*.*'
     ]
 };
 
 gulp.task('html', function() {
     return gulp.src(paths.html)
     .pipe(gulp.dest('./dist/'));
+});
+
+gulp.task('json', function() {
+    return gulp.src(paths.json)
+    .pipe(gulp.dest('./dist/json/'));
 });
 
 gulp.task('styles', function() {
@@ -88,10 +96,11 @@ gulp.task('browser-sync', function() {
     });
 });
 
-gulp.task('build', ['browser-sync', 'styles', 'scripts', 'wire-dependencies']);
+gulp.task('build', ['browser-sync', 'styles', 'scripts', 'wire-dependencies', 'json']);
 
 gulp.task('default', ['build'], function() {
     gulp.watch(paths.styles, ['styles']);
     gulp.watch(paths.scripts, ['scripts']);
+    gulp.watch(paths.json, ['json']);
     gulp.watch(paths.html, ['wire-dependencies', 'bs-reload']);
 });
