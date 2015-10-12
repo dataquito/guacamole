@@ -15,3 +15,22 @@ body,html{
   height: calc(~'100% - 74px');
   width: 100%;
 }
+
+.navbar {
+  .guacamole-header {
+    color: #2ecc71;
+  }
+  .guacamole-dash{
+    color: #9d9d9d;
+  }
+  .guacamole-source {
+    color: #95a5a6;
+  }
+}
+
+.table > tbody > tr {
+  th, td {
+    color: #fff;
+    border-top: 1px solid #353535;
+  }
+}

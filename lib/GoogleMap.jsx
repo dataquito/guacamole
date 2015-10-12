@@ -15,6 +15,7 @@ var GoogleMap = React.createClass({
             latitude: 19.426875,
             longitude:  -99.134564,
             zoom: 5,
+            view: 'states',
             colors: ['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#2c7fb8','#253494'],
             entities: {
                 "01": 19488135081.709801,
@@ -52,11 +53,6 @@ var GoogleMap = React.createClass({
             }
         };
     },
-    getInitialState: function() {
-        return {
-            view: 'states'
-        };
-    },
     componentDidMount: function() {
         if(!this._checkIfGoogleDefined()){
             return;
@@ -70,6 +66,22 @@ var GoogleMap = React.createClass({
         };
         this._map = new google.maps.Map(React.findDOMNode(this), mapOptions);
         this._loadPolygons();
+    },
+    shouldComponentUpdate: function(nextProps, nextState) {
+        console.log('Should I update');
+        var map = this._map;
+        var _this = this;
+        map.data.forEach(function(feature) {
+            var visible = true;
+            if(typeof feature.getProperty(MN_CODE) !== 'undefined' && _this.props.view === 'municipalities'){
+                visible = false;
+            }
+            map.data.overrideStyle(feature, { visible: visible });
+        })
+        return false;
+    },
+    componentWillUpdate: function(nextProps, nextState) {
+        console.log('I will try to upodate');
     },
     _checkIfGoogleDefined: function() {
         if(typeof google === 'object' && typeof google.maps === 'object'){
@@ -99,20 +111,20 @@ var GoogleMap = React.createClass({
         return colorPolygons.promise();
     },
     _setFeatureStyle: function(feature) {
-        var visible = true;
-        if(typeof feature.getProperty(MN_CODE) !== 'undefined' || this.state.view === 'municipalities'){
-            visible = false;
+        if(typeof this.props.featureStyle === 'function'){
+            this.props.featureStyle(feature);
+        }else{
+            var visible = true;
+            if(typeof feature.getProperty(MN_CODE) !== 'undefined' || this.props.view === 'municipalities'){
+                visible = false;
+            }
+            return {
+                strokeWeight: 0.2,
+                fillColor: '#222',
+                visible: visible,
+                fillOpacity: 0.2
+            };
         }
-        return {
-            strokeWeight: 0.2,
-            fillColor: '#222',
-            visible: visible,
-            fillOpacity: 0.2
-        };
-    },
-    _getRandomColor: function() {
-        var colors = this.props.colors;
-        return _.sample(colors);
     },
     _addPolygonListeners: function() {
         var map = this._map;
@@ -135,7 +147,7 @@ var GoogleMap = React.createClass({
     _mouseClickPolygon: function(event) {
         var map = this._map;
         if(typeof this.props.click === 'function'){
-            this.props.click(map);
+            this.props.click(map, event);
         }
     },
     render: function () {
