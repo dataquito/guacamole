@@ -68,12 +68,9 @@ var GoogleMap = React.createClass({
         this._loadPolygons();
     },
     shouldComponentUpdate: function(nextProps, nextState) {
-        console.log('Should I update');
         if(this.props.view === nextProps.view && this.props.layer === nextProps.layer){
-            console.log('nah');
             return false;
         }
-        console.log('yep');
         var map = this._map;
         var _this = this;
         map.data.setStyle(this._setFeatureStyle);
@@ -84,16 +81,15 @@ var GoogleMap = React.createClass({
     },
     _checkIfGoogleDefined: function() {
         if(typeof google === 'object' && typeof google.maps === 'object'){
-            console.info('Google Maps lib is defined');
             return true;
         }
-        console.warn('Google Maps lib is not defined');
         return false;
     },
     _loadPolygons: function() {
         var map = this._map;
-        var getPolygons = $.get('/json/polygons-mexico.json');
+        var getPolygons = $.get('https://s3-us-west-2.amazonaws.com/dataquito-open-data/mexico/polygons-mexico.json');
         getPolygons.done(function(data) {
+            console.log(data);
             map.data.addGeoJson(topojson.feature(data, data.objects.municipalities));
             map.data.addGeoJson(topojson.feature(data, data.objects.states));
         }).then(this._setPolygonsStyles).then(this._addPolygonListeners);

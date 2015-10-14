@@ -25,7 +25,6 @@
     "bootstrap": "~3.3.5"
   },
   "dependencies": {
-    "bootstrap": "~3.3.5",
-    "toastr": "~2.1.2"
+    "bootstrap": "~3.3.5"
   }
 }

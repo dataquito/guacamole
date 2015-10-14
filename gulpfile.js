@@ -8,6 +8,11 @@ var browserify = require('browserify');
 var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var browserSync = require('browser-sync');
+var useref = require('gulp-useref');
+var filter = require('gulp-filter');
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+var csso = require('gulp-csso');
 
 var paths = {
     html: ['app/*.html'],
@@ -68,6 +73,21 @@ gulp.task('scripts', function() {
     });
 });
 
+gulp.task('optimize-css', function() {
+    return gulp.src('dist/styles/app.css')
+    .pipe(csso())
+    .pipe(rename('guacamole.min.css'))
+    .pipe(gulp.dest('./dist/styles/'));
+});
+
+gulp.task('optimize-bundle', function() {
+    return gulp.src('dist/scripts/bundle.js')
+    .pipe(uglify())
+    .pipe(rename('guacamole.min.js'))
+    .pipe(gulp.dest('./dist/scripts/'));
+});
+
+gulp.task('optimize', ['optimize-bundle', 'optimize-css']);
 
 gulp.task('wire-dependencies', ['html'], function() {
     var config = {

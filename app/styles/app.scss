@@ -17,7 +17,11 @@ body,html{
 }
 
 .navbar {
+  img {
+    height: 100%;
+  }
   .guacamole-header {
+    padding: 5px;
     color: #2ecc71;
   }
   .guacamole-dash{
@@ -28,9 +32,12 @@ body,html{
   }
 }
 
+
+
 .radio label {
   color: #fff;
 }
+
 .table > tbody > tr {
   th, td {
     color: #fff;

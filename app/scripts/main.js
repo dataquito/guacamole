@@ -1,5 +1,6 @@
 'use strict';
 var React       = require('react');
+var _           = require('lodash');
 var GoogleMap   = require('../../lib/index').GoogleMap;
 var MN_CODE = 'CVE_GEO_MU';
 
@@ -11,17 +12,26 @@ var Guacamole = React.createClass({
                 height: '100%',
                 width: '100%',
                 background: '#222'
-            }
+            },
+            colors: [
+                '#ffffcc',
+                '#a1dab4',
+                '#41b6c4',
+                '#225ea8'
+            ]
         }
     },
     getInitialState: function() {
         return {
-            view: 'states',
+            view: 'municipalities',
             name: 'Hover over feature',
             data: null,
             quantiles: null,
-            layer: null
+            layer: 'population.json'
         }
+    },
+    componentDidMount: function() {
+        this._requestJSON(this.state.layer);
     },
     _switchView: function() {
         if(this.state.view === 'states'){
@@ -41,28 +51,43 @@ var Guacamole = React.createClass({
         });
     },
     _getEntityValue: function(entityCode) {
+        if(typeof this.state.data[entityCode] === 'undefined' || this.state.data[entityCode] === null){
+            return null;
+        }
         return this.state.data[entityCode].value;
     },
-    _getColorIndex: function(value) {
-        this.state.quantiles.map( function(quantil, index){
-            console.log(quantil);
-            // if(quantil 
-        });
-        return 1;
+    _getColor: function(value) {
+        if(_.inRange(0, value, this.state.quantiles[0])){
+            return this.props.colors[0];
+        }else if(_.inRange(this.state.quantiles[0], value, this.state.quantiles[1])){
+            return this.props.colors[1];
+        }else if(_.inRange(this.state.quantiles[1], value, this.state.quantiles[2])){
+            return this.props.colors[2];
+        }else{
+            return this.props.colors[3];
+        }
     },
     _setFeature: function(feature) {
+        if(this.state.quantiles === null){
+            return {
+                visible: false
+            }
+        }
         var visible = true;
-        var color = '';
+        var color = '#222';
         if(this.state.view === 'municipalities' && typeof feature.getProperty(MN_CODE) === 'undefined'){
             visible = false;
         }else if(this.state.view === 'states' && typeof feature.getProperty(MN_CODE) !== 'undefined'){
             visible = false;
         }
-        var entityCode = feature.getProperty(MN_CODE);
-        if(this.state.data !== null){
+        if(typeof feature.getProperty(MN_CODE) !== 'undefined'){
+            var entityCode = feature.getProperty(MN_CODE);
             var value = this._getEntityValue(entityCode);
-            var index = this._getColorIndex(value);
-            var color = '#7fcdbb';
+            if(value === null){
+                visible = false;
+            }else{
+                color = this._getColor(value);
+            }
         }
         return {
             strokeWeight: 0.2,
@@ -86,7 +111,7 @@ var Guacamole = React.createClass({
         return (
             <div style={this.props.style}>
                 <SideBar switchView={this._switchView} view={this.state.view} name={this.state.name} layerChange={this._requestJSON}/>
-                <GoogleMap view={this.state.view} layer={this.state.layer} mouseOver={mouseOverPolygon} mouseOut={mouseOutPolygon} click={this._click} featureStyle={this._setFeature}/>
+                <GoogleMap view={this.state.view} layer={this.state.layer} zoom={6} mouseOver={mouseOverPolygon} mouseOut={mouseOutPolygon} click={this._click} featureStyle={this._setFeature}/>
             </div>
         );
     }
@@ -197,7 +222,7 @@ var SideBar = React.createClass({
 var mouseOverPolygon = function(map, event) {
     map.data.revertStyle();
     map.data.overrideStyle(event.feature, {
-        strokeWeight: 1,
+        strokeWeight: 0.5,
         fillColor: '#ddd'
     });
 }
