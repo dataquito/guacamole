@@ -1,6 +1,7 @@
 'use strict';
 var React       = require('react');
 var GoogleMap   = require('../../lib/index').GoogleMap;
+var MN_CODE = 'CVE_GEO_MU';
 
 var Guacamole = React.createClass({
     getDefaultProps: function() {
@@ -18,7 +19,8 @@ var Guacamole = React.createClass({
             view: 'states',
             name: 'Hover over feature',
             data: null,
-            quantiles: null
+            quantiles: null,
+            layer: null
         }
     },
     _switchView: function() {
@@ -38,15 +40,53 @@ var Guacamole = React.createClass({
             name: name
         });
     },
+    _getEntityValue: function(entityCode) {
+        return this.state.data[entityCode].value;
+    },
+    _getColorIndex: function(value) {
+        this.state.quantiles.map( function(quantil, index){
+            console.log(quantil);
+            // if(quantil 
+        });
+        return 1;
+    },
+    _setFeature: function(feature) {
+        var visible = true;
+        var color = '';
+        if(this.state.view === 'municipalities' && typeof feature.getProperty(MN_CODE) === 'undefined'){
+            visible = false;
+        }else if(this.state.view === 'states' && typeof feature.getProperty(MN_CODE) !== 'undefined'){
+            visible = false;
+        }
+        var entityCode = feature.getProperty(MN_CODE);
+        if(this.state.data !== null){
+            var value = this._getEntityValue(entityCode);
+            var index = this._getColorIndex(value);
+            var color = '#7fcdbb';
+        }
+        return {
+            strokeWeight: 0.2,
+            fillColor: color,
+            visible: visible,
+            fillOpacity: 0.2
+        };
+    },
     _requestJSON: function(jsonName) {
         var endpoint = 'https://s3-us-west-2.amazonaws.com/dataquito-open-data/mexico/inegi/';
-        console.log(jsonName);
+        var _this = this;
+        $.get(endpoint + jsonName).done(function(data) {
+            _this.setState({
+                data: data.entities,
+                quantiles: data.quantiles,
+                layer: jsonName
+            });
+        });
     },
     render: function() {
         return (
             <div style={this.props.style}>
                 <SideBar switchView={this._switchView} view={this.state.view} name={this.state.name} layerChange={this._requestJSON}/>
-                <GoogleMap view={this.state.view}  mouseOver={mouseOverPolygon} mouseOut={mouseOutPolygon} click={this._click}/>
+                <GoogleMap view={this.state.view} layer={this.state.layer} mouseOver={mouseOverPolygon} mouseOut={mouseOutPolygon} click={this._click} featureStyle={this._setFeature}/>
             </div>
         );
     }
@@ -80,15 +120,16 @@ var SideBar = React.createClass({
     },
     getInitialState: function() {
         return {
-            layer: 'Poblacion'
+            layer: 'population.json'
         }
     },
     _onLayerChange: function(e, i) {
-        console.log(e.currentTarget, e);
+        console.log(e.currentTarget.value, e);
+        var layer = e.currentTarget.value;
         this.setState({
-            layer: e.currentTarget.value
+            layer: layer
         },function() {
-            this.props.layerChange(e);
+            this.props.layerChange(layer);
         });
     },
     render: function() {
@@ -108,8 +149,8 @@ var SideBar = React.createClass({
                     <label>
                         <input type='radio'
                             name='layers'
-                            value={layer.name} 
-                            checked={this.state.layer === layer.name} 
+                            value={layer.json} 
+                            checked={this.state.layer === layer.json} 
                             onChange={this._onLayerChange}/>
                         {layer.name}
                     </label>
