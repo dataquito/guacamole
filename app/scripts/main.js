@@ -93,7 +93,7 @@ var Guacamole = React.createClass({
             strokeWeight: 0.2,
             fillColor: color,
             visible: visible,
-            fillOpacity: 0.2
+            fillOpacity: 0.5
         };
     },
     _requestJSON: function(jsonName) {
@@ -110,9 +110,33 @@ var Guacamole = React.createClass({
     render: function() {
         return (
             <div style={this.props.style}>
-                <SideBar switchView={this._switchView} view={this.state.view} name={this.state.name} layerChange={this._requestJSON}/>
-                <GoogleMap view={this.state.view} layer={this.state.layer} zoom={6} mouseOver={mouseOverPolygon} mouseOut={mouseOutPolygon} click={this._click} featureStyle={this._setFeature}/>
+                <SideBar 
+                    switchView={this._switchView} 
+                    view={this.state.view} 
+                    name={this.state.name} 
+                    layerChange={this._requestJSON}/>
+                <GoogleMap 
+                    view={this.state.view} 
+                    layer={this.state.layer} 
+                    zoom={6} 
+                    mouseOver={mouseOverPolygon} 
+                    mouseOut={mouseOutPolygon} 
+                    click={this._click} 
+                    featureStyle={this._setFeature}>
+                    <SearchBar/>
+                </GoogleMap>
             </div>
+        );
+    }
+});
+
+var SearchBar = React.createClass({
+    componentDidMount: function() {
+        console.log('render search bar');
+    },
+    render: function() {
+        return (
+            <input id='pac-input' className='controls' type='text' placeholder='Search Box'/>
         );
     }
 });
@@ -223,7 +247,7 @@ var mouseOverPolygon = function(map, event) {
     map.data.revertStyle();
     map.data.overrideStyle(event.feature, {
         strokeWeight: 0.5,
-        fillColor: '#ddd'
+        fillOpacity: 0.8
     });
 }
 

@@ -77,7 +77,7 @@ var GoogleMap = React.createClass({
         return false;
     },
     componentWillUpdate: function(nextProps, nextState) {
-        console.log('I will try to upodate');
+        console.log('I will try to update');
     },
     _checkIfGoogleDefined: function() {
         if(typeof google === 'object' && typeof google.maps === 'object'){
@@ -151,6 +151,7 @@ var GoogleMap = React.createClass({
         var style = this.props.containerStyles;
         return (
             <div style={style}>
+                {this.props.children}
             </div>
         );
     }
